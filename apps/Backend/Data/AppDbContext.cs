@@ -100,8 +100,8 @@ namespace Backend.Data
                 },
                 new ApplicationPrompt
                 {
-                    ApplicationPromptId = 1,
-                    ApplicationId = 1,
+                    ApplicationPromptId = 2,
+                    ApplicationId = 2,
                     PromptText = "Xelence 6.0 is a low code no code platform it have entities, rules, forms, inbound, outbound files."
                 }
             );
@@ -142,7 +142,7 @@ namespace Backend.Data
                 }
             );
 
-            
+
             #endregion SeedData
 
             modelBuilder.Entity<UserApplicationMapping>(entity =>
