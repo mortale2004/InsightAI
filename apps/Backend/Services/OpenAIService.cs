@@ -8,41 +8,34 @@ using System.ClientModel;         // required for ApiKeyCredential
 
 namespace Backend.Services
 {
-  public class OpenAIService
-  {
-    private readonly AzureOpenAIClient _client;
-    private readonly string _deploymentName;
-
-    public OpenAIService(IConfiguration config)
+    public class OpenAIService
     {
-      string endpoint = config["AzureOpenAI:Endpoint"]
-                        ?? throw new ArgumentNullException("AzureOpenAI:Endpoint");
-      string apiKey = config["AzureOpenAI:ApiKey"]
-                      ?? throw new ArgumentNullException("AzureOpenAI:ApiKey");
-      _deploymentName = config["AzureOpenAI:DeploymentName"]
-                        ?? throw new ArgumentNullException("AzureOpenAI:DeploymentName");
+        private readonly AzureOpenAIClient _client;
+        private readonly string _deploymentName;
 
-      // Use System.ClientModel.ApiKeyCredential
-      var credential = new ApiKeyCredential(apiKey);
+        public OpenAIService(IConfiguration config)
+        {
+            string endpoint = config["AzureOpenAI:Endpoint"]
+                              ?? throw new ArgumentNullException("AzureOpenAI:Endpoint");
+            string apiKey = config["AzureOpenAI:ApiKey"]
+                            ?? throw new ArgumentNullException("AzureOpenAI:ApiKey");
+            _deploymentName = config["AzureOpenAI:DeploymentName"]
+                              ?? throw new ArgumentNullException("AzureOpenAI:DeploymentName");
 
-      _client = new AzureOpenAIClient(new Uri(endpoint), credential);
+            // Use System.ClientModel.ApiKeyCredential
+            var credential = new ApiKeyCredential(apiKey);
+
+            _client = new AzureOpenAIClient(new Uri(endpoint), credential);
+        }
+
+        public async Task<string> ExecutePromptAsync(List<ChatMessage> messages)
+        {
+            var chatClient = _client.GetChatClient(_deploymentName);
+            var response = await chatClient.CompleteChatAsync(messages);
+
+            // Get the last text content
+            string output = response.Value.Content.Last().Text ?? string.Empty;
+            return output;
+        }
     }
-
-    public async Task<string> ExecutePromptAsync(string prompt)
-    {
-      var chatClient = _client.GetChatClient(_deploymentName);
-
-      var messages = new List<ChatMessage>
-            {
-                new SystemChatMessage("You are a helpful assistant."),
-                new UserChatMessage(prompt)
-            };
-
-      var response = await chatClient.CompleteChatAsync(messages);
-
-      // Get the last text content
-      string output = response.Value.Content.Last().Text ?? string.Empty;
-      return output;
-    }
-  }
 }

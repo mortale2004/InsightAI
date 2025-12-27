@@ -13,7 +13,6 @@ namespace Backend.Data
         public DbSet<ResponseType> ResponseTypes => Set<ResponseType>();
         public DbSet<Region> Regions => Set<Region>();
         public DbSet<Application> Applications => Set<Application>();
-        public DbSet<ApplicationPrompt> ApplicationPrompts => Set<ApplicationPrompt>();
         public DbSet<Prompt> Prompts => Set<Prompt>();
         public DbSet<PromptResponse> PromptResponses => Set<PromptResponse>();
         public DbSet<User> Users => Set<User>();
@@ -25,17 +24,6 @@ namespace Backend.Data
             base.OnModelCreating(modelBuilder);
 
             #region SeedData
-            // ---------------- FileType ----------------
-            modelBuilder.Entity<FileType>().HasData(
-                new FileType
-                {
-                    FileTypeId = 1,
-                    FileTypeName = "Form",
-                    Description = "Form Contains Js,HTML,Css",
-                    PromptText = "This file type contains JS,HTML,CSS,Queries and Rules"
-                }
-            );
-
             // ---------------- ResponseType ----------------
             modelBuilder.Entity<ResponseType>().HasData(
                 new ResponseType
@@ -65,14 +53,16 @@ namespace Backend.Data
                     RegionId = 1,
                     RegionName = "DEVELOPMENT",
                     Description = "Development",
-                    IsActive = true
+                    IsActive = true,
+                    PromptText = "This is a Development Region"
                 },
                 new Region
                 {
                     RegionId = 2,
                     RegionName = "QA",
                     Description = "QA",
-                    IsActive = true
+                    IsActive = true,
+                    PromptText = "This is a QA region"
                 }
             );
 
@@ -81,28 +71,28 @@ namespace Backend.Data
                 new Application
                 {
                     ApplicationId = 1,
-                    ApplicationName = "Xelence 7.0"
+                    ApplicationName = "Xelence 7.0",
+                    PromptText = "Xelence 7.0 is a low code no code platform it have entities, rules, forms, inbound, outbound files."
+
                 },
                 new Application
                 {
                     ApplicationId = 2,
-                    ApplicationName = "Xelence 6.0"
+                    ApplicationName = "Xelence 6.0",
+                    PromptText = "Xelence 6.0 is a low code no code platform it have entities, rules, forms, inbound, outbound files."
+
                 }
             );
 
-            // ---------------- ApplicationPrompts ----------------
-            modelBuilder.Entity<ApplicationPrompt>().HasData(
-                new ApplicationPrompt
+            // ---------------- FileType ----------------
+            modelBuilder.Entity<FileType>().HasData(
+                new FileType
                 {
-                    ApplicationPromptId = 1,
+                    FileTypeId = 1,
                     ApplicationId = 1,
-                    PromptText = "Xelence 7.0 is a low code no code platform it have entities, rules, forms, inbound, outbound files."
-                },
-                new ApplicationPrompt
-                {
-                    ApplicationPromptId = 2,
-                    ApplicationId = 2,
-                    PromptText = "Xelence 6.0 is a low code no code platform it have entities, rules, forms, inbound, outbound files."
+                    FileTypeName = "Form",
+                    Description = "Form Contains Js,HTML,Css",
+                    PromptText = "This file type contains JS,HTML,CSS,Queries and Rules"
                 }
             );
 
@@ -147,15 +137,15 @@ namespace Backend.Data
 
             modelBuilder.Entity<UserApplicationMapping>(entity =>
             {
-                  entity.ToTable("user_application_mapping");
+                entity.ToTable("UserApplicationMapping");
 
-                  entity.HasKey(e => e.UserApplicationId);
+                entity.HasKey(e => e.UserApplicationId);
 
-                  entity.Property(e => e.UserApplicationId)
-                              .UseIdentityColumn();
+                entity.Property(e => e.UserApplicationId)
+                            .UseIdentityColumn();
 
-                  entity.HasIndex(e => new { e.UserId, e.ApplicationId })
-                              .IsUnique();
+                entity.HasIndex(e => new { e.UserId, e.ApplicationId })
+                            .IsUnique();
             });
         }
     }

@@ -4,5 +4,6 @@ namespace Backend.Models
   {
     public int ApplicationId { get; set; }
     public string ApplicationName { get; set; } = null!;
+    public string PromptText { get; set; } = null!;
   }
 }

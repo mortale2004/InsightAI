@@ -34,29 +34,27 @@ namespace Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ApplicationId");
-
-                    b.ToTable("Applications");
-                });
-
-            modelBuilder.Entity("Backend.Models.ApplicationPrompt", b =>
-                {
-                    b.Property<int>("ApplicationPromptId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ApplicationPromptId"));
-
-                    b.Property<int>("ApplicationId")
-                        .HasColumnType("int");
-
                     b.Property<string>("PromptText")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ApplicationPromptId");
+                    b.HasKey("ApplicationId");
 
-                    b.ToTable("ApplicationPrompts");
+                    b.ToTable("Applications");
+
+                    b.HasData(
+                        new
+                        {
+                            ApplicationId = 1,
+                            ApplicationName = "Xelence 7.0",
+                            PromptText = "Xelence 7.0 is a low code no code platform it have entities, rules, forms, inbound, outbound files."
+                        },
+                        new
+                        {
+                            ApplicationId = 2,
+                            ApplicationName = "Xelence 6.0",
+                            PromptText = "Xelence 6.0 is a low code no code platform it have entities, rules, forms, inbound, outbound files."
+                        });
                 });
 
             modelBuilder.Entity("Backend.Models.FileType", b =>
@@ -66,6 +64,9 @@ namespace Backend.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FileTypeId"));
+
+                    b.Property<int>("ApplicationId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -81,6 +82,16 @@ namespace Backend.Migrations
                     b.HasKey("FileTypeId");
 
                     b.ToTable("FileTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            FileTypeId = 1,
+                            ApplicationId = 1,
+                            Description = "Form Contains Js,HTML,Css",
+                            FileTypeName = "Form",
+                            PromptText = "This file type contains JS,HTML,CSS,Queries and Rules"
+                        });
                 });
 
             modelBuilder.Entity("Backend.Models.Prompt", b =>
@@ -111,6 +122,17 @@ namespace Backend.Migrations
                     b.HasKey("PromptId");
 
                     b.ToTable("Prompts");
+
+                    b.HasData(
+                        new
+                        {
+                            PromptId = 1,
+                            ApplicationId = 1,
+                            FileTypeId = 1,
+                            PromptName = "Generate Summary",
+                            PromptText = "Summerize the following form",
+                            RegionId = 1
+                        });
                 });
 
             modelBuilder.Entity("Backend.Models.PromptResponse", b =>
@@ -130,6 +152,14 @@ namespace Backend.Migrations
                     b.HasKey("PromptResponseId");
 
                     b.ToTable("PromptResponses");
+
+                    b.HasData(
+                        new
+                        {
+                            PromptResponseId = 1,
+                            PromptId = 1,
+                            ResponseTypeId = 3
+                        });
                 });
 
             modelBuilder.Entity("Backend.Models.Region", b =>
@@ -146,6 +176,10 @@ namespace Backend.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<string>("PromptText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("RegionName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -153,6 +187,24 @@ namespace Backend.Migrations
                     b.HasKey("RegionId");
 
                     b.ToTable("Regions");
+
+                    b.HasData(
+                        new
+                        {
+                            RegionId = 1,
+                            Description = "Development",
+                            IsActive = true,
+                            PromptText = "This is a Development Region",
+                            RegionName = "DEVELOPMENT"
+                        },
+                        new
+                        {
+                            RegionId = 2,
+                            Description = "QA",
+                            IsActive = true,
+                            PromptText = "This is a QA region",
+                            RegionName = "QA"
+                        });
                 });
 
             modelBuilder.Entity("Backend.Models.ResponseType", b =>
@@ -173,6 +225,26 @@ namespace Backend.Migrations
                     b.HasKey("ResponseTypeId");
 
                     b.ToTable("ResponseTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            ResponseTypeId = 1,
+                            IsActive = true,
+                            ResponseTypeName = "TEXT"
+                        },
+                        new
+                        {
+                            ResponseTypeId = 2,
+                            IsActive = true,
+                            ResponseTypeName = "JSON"
+                        },
+                        new
+                        {
+                            ResponseTypeId = 3,
+                            IsActive = true,
+                            ResponseTypeName = "HTML"
+                        });
                 });
 
             modelBuilder.Entity("Backend.Models.User", b =>
@@ -208,6 +280,17 @@ namespace Backend.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            Email = "admin@insightai.com",
+                            FirstName = "Admin",
+                            LastName = "User",
+                            PasswordHash = "$2a$11$DoPFBeEnvorncsXfgzs5/.Q2L4Ypw/r//4yx2TkkA3Ndk0OXY0I22",
+                            RegionId = 1
+                        });
                 });
 
             modelBuilder.Entity("Backend.Models.UserApplicationMapping", b =>
@@ -232,7 +315,7 @@ namespace Backend.Migrations
                     b.HasIndex("UserId", "ApplicationId")
                         .IsUnique();
 
-                    b.ToTable("user_application_mapping", (string)null);
+                    b.ToTable("UserApplicationMapping", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Models.UserPrompt", b =>

@@ -23,6 +23,11 @@ namespace Backend.Services
             return await _db.ResponseTypes.FindAsync(id);
         }
 
+        public async Task<ResponseType?> GetByTypeAsync(string responseType)
+        {
+            return await _db.ResponseTypes.SingleOrDefaultAsync(a => a.ResponseTypeName == responseType);
+        }
+
         public async Task<ResponseType> Create(ResponseType entity)
         {
             _db.ResponseTypes.Add(entity);

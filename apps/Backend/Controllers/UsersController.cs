@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controllers
 {
-  [Authorize]
   [ApiController]
   [Route("api/users")]
   public class UsersController : ControllerBase

@@ -4,35 +4,39 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
 {
-  [Authorize]
-  [ApiController]
-  [Route("api/execute")]
-  public class PromptExecutionController : ControllerBase
-  {
-    private readonly PromptExecutionService _service;
-
-    public PromptExecutionController(PromptExecutionService service)
+    [ApiController]
+    [Route("api/execute")]
+    public class PromptExecutionController : ControllerBase
     {
-      _service = service;
+        private readonly PromptExecutionService _service;
+
+        public PromptExecutionController(PromptExecutionService service)
+        {
+            _service = service;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Execute(ExecutePromptRequest request)
+        {
+            var result = await _service.ExecuteAsync(request);
+
+            return Ok(new { response = result });
+        }
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Execute(ExecutePromptRequest request)
-    {
-      var result = await _service.ExecuteAsync(
-          request.PromptId,
-          request.ResponseTypeId,
-          request.ApplicationId,
-          User
-      );
+    public record ExecutePromptRequest(
+        string ApplicationName,
+        string RegionName,
+        string FileName,
+        string FileType,
+        string FileContent,
+        string? Prompt,
+        ChildFileData[]? ChildFiles
+    );
 
-      return Ok(new { response = result });
-    }
-  }
-
-  public record ExecutePromptRequest(
-      int PromptId,
-      int ResponseTypeId,
-      int ApplicationId
-  );
+    public record ChildFileData(
+        string FileName,
+        string FileType,
+        string FileContent
+    );
 }
