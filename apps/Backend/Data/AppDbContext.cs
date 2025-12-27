@@ -90,7 +90,7 @@ namespace Backend.Data
                 {
                     FileTypeId = 1,
                     ApplicationId = 1,
-                    FileTypeName = "Form",
+                    FileTypeName = "FORM",
                     Description = "Form Contains Js,HTML,Css",
                     PromptText = "This file type contains JS,HTML,CSS,Queries and Rules"
                 }

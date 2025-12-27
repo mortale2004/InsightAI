@@ -167,7 +167,7 @@ namespace Backend.Migrations
             migrationBuilder.InsertData(
                 table: "FileTypes",
                 columns: new[] { "FileTypeId", "ApplicationId", "Description", "FileTypeName", "PromptText" },
-                values: new object[] { 1, 1, "Form Contains Js,HTML,Css", "Form", "This file type contains JS,HTML,CSS,Queries and Rules" });
+                values: new object[] { 1, 1, "Form Contains Js,HTML,Css", "FORM", "This file type contains JS,HTML,CSS,Queries and Rules" });
 
             migrationBuilder.InsertData(
                 table: "PromptResponses",
@@ -201,7 +201,7 @@ namespace Backend.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "UserId", "Email", "FirstName", "LastName", "MiddleName", "PasswordHash", "RegionId" },
-                values: new object[] { 1, "admin@insightai.com", "Admin", "User", null, "$2a$11$DoPFBeEnvorncsXfgzs5/.Q2L4Ypw/r//4yx2TkkA3Ndk0OXY0I22", 1 });
+                values: new object[] { 1, "admin@insightai.com", "Admin", "User", null, "$2a$11$sD.v3OEeBkxyTEOoAFBDJ.N0nH5v8w7C62o8gvRmvKLwin2xcEwHu", 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserApplicationMapping_UserId_ApplicationId",

@@ -1,10 +1,15 @@
 import { apiHooks } from "@/hooks/apiHooks";
+import { appPromptAtom } from "@/store/app";
+import { useAtomValue } from "jotai";
 import { useState, useRef, useEffect } from "react";
+import User from "./User";
+import Assistant from "./Assistant";
 
 export default function Chat() {
   const [messages, setMessages] = useState([
     { role: "assistant", content: "Hello! How can I help you today?" },
   ]);
+  const appPrompt = useAtomValue(appPromptAtom);
   const [input, setInput] = useState("");
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -19,49 +24,18 @@ export default function Chat() {
   const sendMessage = () => {
     if (!input.trim()) return;
     setMessages((prev) => [...prev, { role: "user", content: input }]);
-    setInput("");
     sendMessageApi.mutateAsync(
       {
-        applicationName: "Xelence 7.0",
-        fileType: "Form",
-        fileName: "wfmLogin",
-        regionName: "DEVELOPMENT",
+        ...appPrompt,
         prompt: input,
-        fileContent: `<!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Login Page</title>
-            <link rel="stylesheet" href="style.css">
-        </head>
-        <body>
-            <div class="login-container">
-                <form class="login-form" id="loginForm">
-                    <h2>Login</h2>
-                    <div class="input-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" name="username" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" required>
-                    </div>
-                    <button type="submit">Log In</button>
-                    <p id="message"></p>
-                </form>
-            </div>
-            <script src="script.js"></script>
-        </body>
-        </html>
-        `,
       },
       {
         onSuccess: (response: any) => {
-          setMessages((prev) => [...prev, { role: "assistant", content: response }]);
+          setMessages((prev) => [...prev, { role: "assistant", content: response?.response }]);
         },
       }
     );
+    setInput("");
   };
 
   return (
@@ -73,20 +47,13 @@ export default function Chat() {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
-        {messages.map((msg, i) => (
-          <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-            <div
-              className={`max-w-[75%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm
-                ${
-                  msg.role === "user"
-                    ? "bg-[rgb(var(--bg-user))] text-white rounded-br-sm"
-                    : "bg-[rgb(var(--bg-assistant))] text-[rgb(var(--text-main))] rounded-bl-sm"
-                }`}
-            >
-              {msg.content}
-            </div>
-          </div>
-        ))}
+        {messages.map((msg, i) =>
+          msg.role === "user" ? (
+            <User key={i} content={msg.content} />
+          ) : (
+            <Assistant key={i} content={msg.content} type={"html"} />
+          )
+        )}
         <div ref={bottomRef} />
       </div>
 

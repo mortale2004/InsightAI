@@ -1,14 +1,45 @@
 {
-	"files": [],
-	"references": [
-		{ "path": "./tsconfig.app.json" },
-		{ "path": "./tsconfig.node.json" }
-	],
-	"compilerOptions": {
-		"baseUrl": ".",
-		"paths": {
-			"@/*": ["./src/*"],
-			"@repo/ui/*": ["../../packages/ui/src/*"],
-		}
-	}
+  "$schema": "https://json.schemastore.org/tsconfig",
+
+  "extends": "@repo/typescript-config/base.app.json",
+
+  "compilerOptions": {
+    /* ---------- General ---------- */
+    "noEmit": true,
+    "noImplicitAny": false,
+    "strict": true,
+    "skipLibCheck": true,
+
+    /* ---------- JSX / React ---------- */
+    "jsx": "react-jsx",
+
+    /* ---------- Module / Bundler ---------- */
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+
+    /* ---------- Interop ---------- */
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
+    /* ---------- Paths ---------- */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@repo/ui/*": ["../../packages/ui/src/*"]
+    },
+
+    /* ---------- Types ---------- */
+    "types": ["vite/client", "node"]
+  },
+
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "vite.config.ts",
+    "declaration.d.ts"
+  ],
+
+  "exclude": ["dist", "node_modules"]
 }

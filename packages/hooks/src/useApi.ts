@@ -7,12 +7,7 @@ import {
   UseQueryResult,
 } from "@tanstack/react-query";
 import axios from "axios";
-import {
-  routeMethod,
-  routeMethodsArray,
-  RoutesType,
-  routeMethods,
-} from "@repo/constants";
+import { routeMethod, routeMethodsArray, RoutesType, routeMethods } from "@repo/constants";
 
 const API_URL = // @ts-ignore
   import.meta.env.VITE_APP_API_URL;
@@ -31,11 +26,7 @@ api.interceptors.response.use(
       originalRequest._retry = true;
       try {
         // Attempt to refresh the token
-        await axios.post(
-          API_URL + "refreshtoken",
-          {},
-          { withCredentials: true },
-        );
+        await axios.post(API_URL + "refreshtoken", {}, { withCredentials: true });
         return api(originalRequest); // Retry the original request
       } catch (err) {
         // @ts-ignore
@@ -44,7 +35,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  },
+  }
 );
 
 type AxiosMethods = "get" | "post" | "put" | "delete" | "patch";
@@ -79,7 +70,7 @@ export const useCreateData = <TVariables, TResponse>(
   options?: UseMutationOptions<TResponse, any, TVariables>,
   onSuccess?: Function,
   onError?: Function,
-  defaultHandlers: boolean = true,
+  defaultHandlers: boolean = true
 ) => {
   return useMutation<TResponse, any, TVariables>({
     mutationFn: async (payload: TVariables) => {
@@ -104,7 +95,7 @@ export const useUpdateData = <TVariables, TResponse>(
   options?: UseMutationOptions<TResponse, any, TVariables>,
   onSuccess?: Function,
   onError?: Function,
-  defaultHandlers: boolean = true,
+  defaultHandlers: boolean = true
 ) => {
   return useMutation<TResponse, any, TVariables>({
     mutationFn: async (payload: TVariables) => {
@@ -132,7 +123,7 @@ export const useGetData = <TResponse>(
   },
   onSuccess?: Function,
   onError?: Function,
-  defaultHandlers: boolean = true,
+  defaultHandlers: boolean = true
 ): UseQueryResult<TResponse, any> => {
   const queryFn = async () => {
     try {
@@ -151,9 +142,7 @@ export const useGetData = <TResponse>(
     refetchOnWindowFocus: false,
     retry: false,
     ...options,
-    queryKey: options.queryKey
-      ? options.queryKey
-      : [endpoint, JSON.stringify(params)],
+    queryKey: options.queryKey ? options.queryKey : [endpoint, JSON.stringify(params)],
   });
 };
 
@@ -164,7 +153,7 @@ export const useDeleteData = <TVariables, TResponse>(
   options?: UseMutationOptions<TResponse, any, TVariables>,
   onSuccess?: Function,
   onError?: Function,
-  defaultHandlers: boolean = true,
+  defaultHandlers: boolean = true
 ) => {
   return useMutation<TResponse, any, TVariables>({
     mutationFn: async ({ _id, params }: any) => {
@@ -191,35 +180,13 @@ export const useDeleteData = <TVariables, TResponse>(
 const getRouteHandler = (method: routeMethod, endpoint: string) => {
   switch (method) {
     case routeMethods.Create:
-      return (
-        options?: any,
-        onSuccess?: Function,
-        onError?: Function,
-        defautHanders?: boolean,
-      ) => {
-        return useCreateData(
-          endpoint,
-          options,
-          onSuccess,
-          onError,
-          defautHanders,
-        );
+      return (options?: any, onSuccess?: Function, onError?: Function, defautHanders?: boolean) => {
+        return useCreateData(endpoint, options, onSuccess, onError, defautHanders);
       };
 
     case routeMethods.Update:
-      return (
-        options?: any,
-        onSuccess?: Function,
-        onError?: Function,
-        defautHanders?: boolean,
-      ) => {
-        return useUpdateData(
-          endpoint,
-          options,
-          onSuccess,
-          onError,
-          defautHanders,
-        );
+      return (options?: any, onSuccess?: Function, onError?: Function, defautHanders?: boolean) => {
+        return useUpdateData(endpoint, options, onSuccess, onError, defautHanders);
       };
 
     case routeMethods.Delete:
@@ -228,16 +195,9 @@ const getRouteHandler = (method: routeMethod, endpoint: string) => {
         options?: any,
         onSuccess?: Function,
         onError?: Function,
-        defautHanders?: boolean,
+        defautHanders?: boolean
       ) => {
-        return useDeleteData(
-          endpoint,
-          params,
-          options,
-          onSuccess,
-          onError,
-          defautHanders,
-        );
+        return useDeleteData(endpoint, params, options, onSuccess, onError, defautHanders);
       };
 
     case routeMethods.Get:
@@ -247,16 +207,9 @@ const getRouteHandler = (method: routeMethod, endpoint: string) => {
         options?: any,
         onSuccess?: Function,
         onError?: Function,
-        defaultHanders?: boolean,
+        defaultHanders?: boolean
       ) => {
-        return useGetData(
-          `${endpoint}/${id}`,
-          params,
-          options,
-          onSuccess,
-          onError,
-          defaultHanders,
-        );
+        return useGetData(`${endpoint}/${id}`, params, options, onSuccess, onError, defaultHanders);
       };
 
     case routeMethods.GetList:
@@ -265,26 +218,14 @@ const getRouteHandler = (method: routeMethod, endpoint: string) => {
         options?: any,
         onSuccess?: Function,
         onError?: Function,
-        defaultHanders?: boolean,
+        defaultHanders?: boolean
       ) => {
-        return useGetData(
-          endpoint,
-          params,
-          options,
-          onSuccess,
-          onError,
-          defaultHanders,
-        );
+        return useGetData(endpoint, params, options, onSuccess, onError, defaultHanders);
       };
   }
 };
 
-const addHook = (
-  hooks: Record<string, any>,
-  routeName: string,
-  route: string,
-  method: string,
-) => {
+const addHook = (hooks: Record<string, any>, routeName: string, route: string, method: string) => {
   const hookName = `use${method}`;
   if (hooks[routeName]) {
     hooks[routeName][hookName] = getRouteHandler(method as routeMethod, route);
@@ -298,17 +239,16 @@ const addHook = (
 // Dynamically generate hooks for all endpoints
 export const generateApiHooks = (routesConfig: RoutesType) => {
   const hooks = {};
-    for (const [routeName, route] of Object.entries(routesConfig)) {
-      if (typeof route === "string") {
-        for (const method of routeMethodsArray) {
-          addHook(hooks, routeName, route, method);
-        }
-      } else {
-        for (const [method, curentRoute] of Object.entries(route)) {
-          addHook(hooks, routeName, curentRoute, method);
-        }
+  for (const [routeName, route] of Object.entries(routesConfig)) {
+    if (typeof route === "string") {
+      for (const method of routeMethodsArray) {
+        addHook(hooks, routeName, route, method);
       }
+    } else {
+      for (const [method, curentRoute] of Object.entries(route)) {
+        addHook(hooks, routeName, curentRoute, method);
+      }
+    }
   }
   return hooks;
 };
-

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251227135837_InitialMigrations")]
+    [Migration("20251227142651_InitialMigrations")]
     partial class InitialMigrations
     {
         /// <inheritdoc />
@@ -92,7 +92,7 @@ namespace Backend.Migrations
                             FileTypeId = 1,
                             ApplicationId = 1,
                             Description = "Form Contains Js,HTML,Css",
-                            FileTypeName = "Form",
+                            FileTypeName = "FORM",
                             PromptText = "This file type contains JS,HTML,CSS,Queries and Rules"
                         });
                 });
@@ -291,7 +291,7 @@ namespace Backend.Migrations
                             Email = "admin@insightai.com",
                             FirstName = "Admin",
                             LastName = "User",
-                            PasswordHash = "$2a$11$DoPFBeEnvorncsXfgzs5/.Q2L4Ypw/r//4yx2TkkA3Ndk0OXY0I22",
+                            PasswordHash = "$2a$11$sD.v3OEeBkxyTEOoAFBDJ.N0nH5v8w7C62o8gvRmvKLwin2xcEwHu",
                             RegionId = 1
                         });
                 });

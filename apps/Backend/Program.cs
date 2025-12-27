@@ -14,6 +14,22 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("InsightAICors", policy =>
+    {
+        policy.WithOrigins(
+             "http://localhost:5173",
+             "https://localhost:7112"
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
+
+    });
+});
+
 //builder.Services.AddSwaggerGen(c =>
 //{
 //  c.AddSecurityDefinition("Bearer", new()
@@ -94,20 +110,40 @@ builder.Services.AddScoped<UserApplicationMappingService>();
 var app = builder.Build();
 
 // --------------------
-// Middleware pipeline
+// Swagger
 // --------------------
 if (app.Environment.IsDevelopment())
 {
-  app.UseSwagger();
-  app.UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
+// --------------------
+// CORS MUST COME EARLY
+// --------------------
+app.UseCors("InsightAICors");
+
+
+// --------------------
+// Routing
+// --------------------
+app.UseRouting();
+
+// --------------------
+// OPTIONAL: HTTPS redirect (safe now)
+// --------------------
 app.UseHttpsRedirection();
 
-// 🔑 IMPORTANT ORDER
-//app.UseAuthentication();
-//app.UseAuthorization();
+// --------------------
+// Auth (when enabled)
+// --------------------
+// app.UseAuthentication();
+// app.UseAuthorization();
 
+// --------------------
+// Endpoints
+// --------------------
 app.MapControllers();
 
 app.Run();
+
