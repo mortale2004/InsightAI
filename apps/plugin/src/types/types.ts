@@ -14,4 +14,6 @@ export type appPromptType = {
   fileType: FileType;
   fileContent: string;
   childFiles?: ChildFileType[];
+  userId:number;
+  userChatId?:number;
 };

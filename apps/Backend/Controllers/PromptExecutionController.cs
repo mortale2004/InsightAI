@@ -1,3 +1,4 @@
+using Azure.Core;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,27 +17,20 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Execute(ExecutePromptRequest request)
+        public async Task Execute(ExecutePromptRequest request, CancellationToken cancellationToken)
         {
-            var result = await _service.ExecuteAsync(request);
+            Response.ContentType = "text/plain";
+            Response.Headers.Append("Cache-Control", "no-cache");
+            Response.Headers.Append("Connection", "keep-alive");
 
-            return Ok(new { response = result });
+            await foreach (var chunk in _service.ExecutePromptStreamingAsync(request)
+                                                .WithCancellation(cancellationToken))
+            {
+                await Response.WriteAsync(chunk, cancellationToken);
+                await Response.Body.FlushAsync(cancellationToken);
+            }
         }
     }
 
-    public record ExecutePromptRequest(
-        string ApplicationName,
-        string RegionName,
-        string FileName,
-        string FileType,
-        string FileContent,
-        string? Prompt,
-        ChildFileData[]? ChildFiles
-    );
-
-    public record ChildFileData(
-        string FileName,
-        string FileType,
-        string FileContent
-    );
+    public record ExecutePromptRequest(string Prompt, int UserChatId);
 }

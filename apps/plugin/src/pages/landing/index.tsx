@@ -1,10 +1,9 @@
-import Chat from "@/components/Chat";
-import Sidebar from "@/components/Sidebar";
+import Chat from "@/components/Chat/Chat";
 
 const Landing = () => {
   return (
     <main className="flex h-dvh">
-      <Sidebar />
+      {/* <Sidebar /> */}
       <div className="w-full">
         <Chat />
       </div>

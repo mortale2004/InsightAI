@@ -135,33 +135,6 @@ namespace Backend.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Backend.Models.PromptResponse", b =>
-                {
-                    b.Property<int>("PromptResponseId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PromptResponseId"));
-
-                    b.Property<int>("PromptId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ResponseTypeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PromptResponseId");
-
-                    b.ToTable("PromptResponses");
-
-                    b.HasData(
-                        new
-                        {
-                            PromptResponseId = 1,
-                            PromptId = 1,
-                            ResponseTypeId = 3
-                        });
-                });
-
             modelBuilder.Entity("Backend.Models.Region", b =>
                 {
                     b.Property<int>("RegionId")
@@ -207,46 +180,6 @@ namespace Backend.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Backend.Models.ResponseType", b =>
-                {
-                    b.Property<int>("ResponseTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResponseTypeId"));
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ResponseTypeName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ResponseTypeId");
-
-                    b.ToTable("ResponseTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            ResponseTypeId = 1,
-                            IsActive = true,
-                            ResponseTypeName = "TEXT"
-                        },
-                        new
-                        {
-                            ResponseTypeId = 2,
-                            IsActive = true,
-                            ResponseTypeName = "JSON"
-                        },
-                        new
-                        {
-                            ResponseTypeId = 3,
-                            IsActive = true,
-                            ResponseTypeName = "HTML"
-                        });
-                });
-
             modelBuilder.Entity("Backend.Models.User", b =>
                 {
                     b.Property<int>("UserId")
@@ -288,7 +221,7 @@ namespace Backend.Migrations
                             Email = "admin@insightai.com",
                             FirstName = "Admin",
                             LastName = "User",
-                            PasswordHash = "$2a$11$sD.v3OEeBkxyTEOoAFBDJ.N0nH5v8w7C62o8gvRmvKLwin2xcEwHu",
+                            PasswordHash = "$2a$11$v4UocLFEfnMHv7g3PJj9/O4IgfzcSM.UHuR5AmoC7mo8xltgTS1AW",
                             RegionId = 1
                         });
                 });
@@ -318,6 +251,42 @@ namespace Backend.Migrations
                     b.ToTable("UserApplicationMapping", (string)null);
                 });
 
+            modelBuilder.Entity("Backend.Models.UserChat", b =>
+                {
+                    b.Property<int>("UserChatId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserChatId"));
+
+                    b.Property<DateTime>("AddedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ApplicationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FileTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RegionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserChatName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserChatId");
+
+                    b.ToTable("UserChats");
+                });
+
             modelBuilder.Entity("Backend.Models.UserPrompt", b =>
                 {
                     b.Property<int>("UserPromptId")
@@ -329,20 +298,15 @@ namespace Backend.Migrations
                     b.Property<DateTime>("AddedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ApplicationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PromptId")
-                        .HasColumnType("int");
+                    b.Property<string>("Prompt")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ResponseText")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ResponseTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
+                    b.Property<int>("UserChatId")
                         .HasColumnType("int");
 
                     b.HasKey("UserPromptId");

@@ -1,10 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Azure.AI.OpenAI;
 using OpenAI.Chat;                // chat message classes
+using System;
 using System.ClientModel;         // required for ApiKeyCredential
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Backend.Services
 {
@@ -36,6 +37,22 @@ namespace Backend.Services
             // Get the last text content
             string output = response.Value.Content.Last().Text ?? string.Empty;
             return output;
+        }
+
+        public async IAsyncEnumerable<string> ExecutePromptStreamingAsync(List<ChatMessage> messages)
+        {
+            var chatClient = _client.GetChatClient(_deploymentName);
+            await foreach (var update in chatClient.CompleteChatStreamingAsync(
+                       messages))
+            {
+                foreach (ChatMessageContentPart content in update.ContentUpdate)
+                {
+                    if (!string.IsNullOrEmpty(content.Text))
+                    {
+                        yield return content.Text;
+                    }
+                }
+            }
         }
     }
 }

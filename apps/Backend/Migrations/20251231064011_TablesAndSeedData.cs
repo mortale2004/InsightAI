@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigrations : Migration
+    public partial class TablesAndSeedData : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -41,20 +41,6 @@ namespace Backend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_FileTypes", x => x.FileTypeId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PromptResponses",
-                columns: table => new
-                {
-                    PromptResponseId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PromptId = table.Column<int>(type: "int", nullable: false),
-                    ResponseTypeId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PromptResponses", x => x.PromptResponseId);
                 });
 
             migrationBuilder.CreateTable(
@@ -91,20 +77,6 @@ namespace Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ResponseTypes",
-                columns: table => new
-                {
-                    ResponseTypeId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ResponseTypeName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ResponseTypes", x => x.ResponseTypeId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "UserApplicationMapping",
                 columns: table => new
                 {
@@ -120,16 +92,33 @@ namespace Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserChats",
+                columns: table => new
+                {
+                    UserChatId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    UserChatName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ApplicationId = table.Column<int>(type: "int", nullable: false),
+                    RegionId = table.Column<int>(type: "int", nullable: false),
+                    FileTypeId = table.Column<int>(type: "int", nullable: false),
+                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AddedOn = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserChats", x => x.UserChatId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserPrompts",
                 columns: table => new
                 {
                     UserPromptId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Prompt = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ResponseText = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ResponseTypeId = table.Column<int>(type: "int", nullable: false),
-                    PromptId = table.Column<int>(type: "int", nullable: false),
-                    ApplicationId = table.Column<int>(type: "int", nullable: false),
+                    UserChatId = table.Column<int>(type: "int", nullable: false),
                     AddedOn = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -170,11 +159,6 @@ namespace Backend.Migrations
                 values: new object[] { 1, 1, "Form Contains Js,HTML,Css", "FORM", "This file type contains JS,HTML,CSS,Queries and Rules" });
 
             migrationBuilder.InsertData(
-                table: "PromptResponses",
-                columns: new[] { "PromptResponseId", "PromptId", "ResponseTypeId" },
-                values: new object[] { 1, 1, 3 });
-
-            migrationBuilder.InsertData(
                 table: "Prompts",
                 columns: new[] { "PromptId", "ApplicationId", "FileTypeId", "PromptName", "PromptText", "RegionId" },
                 values: new object[] { 1, 1, 1, "Generate Summary", "Summerize the following form", 1 });
@@ -189,19 +173,9 @@ namespace Backend.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "ResponseTypes",
-                columns: new[] { "ResponseTypeId", "IsActive", "ResponseTypeName" },
-                values: new object[,]
-                {
-                    { 1, true, "TEXT" },
-                    { 2, true, "JSON" },
-                    { 3, true, "HTML" }
-                });
-
-            migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "UserId", "Email", "FirstName", "LastName", "MiddleName", "PasswordHash", "RegionId" },
-                values: new object[] { 1, "admin@insightai.com", "Admin", "User", null, "$2a$11$sD.v3OEeBkxyTEOoAFBDJ.N0nH5v8w7C62o8gvRmvKLwin2xcEwHu", 1 });
+                values: new object[] { 1, "admin@insightai.com", "Admin", "User", null, "$2a$11$v4UocLFEfnMHv7g3PJj9/O4IgfzcSM.UHuR5AmoC7mo8xltgTS1AW", 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserApplicationMapping_UserId_ApplicationId",
@@ -220,19 +194,16 @@ namespace Backend.Migrations
                 name: "FileTypes");
 
             migrationBuilder.DropTable(
-                name: "PromptResponses");
-
-            migrationBuilder.DropTable(
                 name: "Prompts");
 
             migrationBuilder.DropTable(
                 name: "Regions");
 
             migrationBuilder.DropTable(
-                name: "ResponseTypes");
+                name: "UserApplicationMapping");
 
             migrationBuilder.DropTable(
-                name: "UserApplicationMapping");
+                name: "UserChats");
 
             migrationBuilder.DropTable(
                 name: "UserPrompts");

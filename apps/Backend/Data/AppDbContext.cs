@@ -10,42 +10,20 @@ namespace Backend.Data
             : base(options) { }
 
         public DbSet<FileType> FileTypes => Set<FileType>();
-        public DbSet<ResponseType> ResponseTypes => Set<ResponseType>();
         public DbSet<Region> Regions => Set<Region>();
         public DbSet<Application> Applications => Set<Application>();
         public DbSet<Prompt> Prompts => Set<Prompt>();
-        public DbSet<PromptResponse> PromptResponses => Set<PromptResponse>();
         public DbSet<User> Users => Set<User>();
         public DbSet<UserApplicationMapping> UserApplicationMappings => Set<UserApplicationMapping>();
         public DbSet<UserPrompt> UserPrompts => Set<UserPrompt>();
+        public DbSet<UserChat> UserChats => Set<UserChat>();
+        public DbSet<UserChatContext> UserChatContexts => Set<UserChatContext>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             #region SeedData
-            // ---------------- ResponseType ----------------
-            modelBuilder.Entity<ResponseType>().HasData(
-                new ResponseType
-                {
-                    ResponseTypeId = 1,
-                    ResponseTypeName = "TEXT",
-                    IsActive = true
-                },
-                new ResponseType
-                {
-                    ResponseTypeId = 2,
-                    ResponseTypeName = "JSON",
-                    IsActive = true
-                },
-                new ResponseType
-                {
-                    ResponseTypeId = 3,
-                    ResponseTypeName = "HTML",
-                    IsActive = true
-                }
-            );
-
             // ---------------- Region ----------------
             modelBuilder.Entity<Region>().HasData(
                 new Region
@@ -106,16 +84,6 @@ namespace Backend.Data
                     FileTypeId = 1,
                     RegionId = 1,
                     PromptText = "Summerize the following form"
-                }
-            );
-
-            // ---------------- PromptResponse ----------------
-            modelBuilder.Entity<PromptResponse>().HasData(
-                new PromptResponse
-                {
-                    PromptResponseId = 1,
-                    PromptId = 1,
-                    ResponseTypeId = 3
                 }
             );
 

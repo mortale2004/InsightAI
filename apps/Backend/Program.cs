@@ -97,12 +97,13 @@ builder.Services.AddScoped<FileTypeService>();
 builder.Services.AddScoped<RegionService>();
 builder.Services.AddScoped<ApplicationService>();
 builder.Services.AddScoped<PromptService>();
-builder.Services.AddScoped<PromptResponseService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<UserPromptService>();
 builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<ResponseTypeService>();
 builder.Services.AddScoped<UserApplicationMappingService>();
+builder.Services.AddScoped<UserChatService>();
+builder.Services.AddScoped<UserChatContextService>();
+
 
 // --------------------
 // Build app
