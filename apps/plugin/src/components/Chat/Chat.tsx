@@ -40,7 +40,7 @@ const Chat = () => {
     const decoder = new TextDecoder("utf-8");
 
     let accumulatedText = "";
-    const lastMessageIndex = messages.length;
+    const lastMessageIndex = messages.length + 1;
 
     while (true) {
       const { value, done } = await reader.read();
