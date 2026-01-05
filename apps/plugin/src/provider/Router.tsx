@@ -5,7 +5,7 @@ const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" Component={Landing} />
+        <Route path="*" Component={Landing} />
       </Routes>
     </BrowserRouter>
   );

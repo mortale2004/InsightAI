@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Insight AI Plugin User</title>
+  </head>
+  <body>
+    <div id="insightai"></div>
+  </body>
+  <script>
+    (function loadInsightAI() {
+      if (window.InsightAI) return; // already loaded
+
+
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "../plugin/dist/plugin.css";
+
+      link.onload = function () {
+        console.log("InsightAI CSS loaded");
+      };
+
+      link.onerror = function () {
+        console.error("Failed to load InsightAI CSS");
+      };
+
+      document.head.appendChild(link);
+
+      const script = document.createElement("script");
+      script.src = "../plugin/dist/insightai.min.js";
+      script.async = true;
+
+      script.onload = function () {
+        if (window.InsightAI?.mount) {
+          window.InsightAI.mount("insightai", {
+            applicationName: "Xelence 7.0",
+            regionName: "Development",
+            fileName: "wfmLogin",
+            fileType: "Form",
+            fileContent: `&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Login Form&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+    &lt;h2&gt;Login&lt;/h2&gt;
+
+    &lt;form action="/login_processor" method="POST"&gt;
+        &lt;div&gt;
+            &lt;label for="username"&gt;Username:&lt;/label&gt;
+            &lt;input type="text" id="username" name="username" required&gt;
+        &lt;/div&gt;
+        &lt;br&gt;
+        &lt;div&gt;
+            &lt;label for="password"&gt;Password:&lt;/label&gt;
+            &lt;input type="password" id="password" name="password" required&gt;
+        &lt;/div&gt;
+        &lt;br&gt;
+        &lt;button type="submit"&gt;Login&lt;/button&gt;
+    &lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+
+`,
+            childFiles: [],
+            userId: 1,
+          });
+        }
+      };
+
+      script.onerror = function () {
+        console.error("Failed to load InsightAI widget");
+      };
+
+      document.head.appendChild(script);
+    })();
+  </script>
+</html>

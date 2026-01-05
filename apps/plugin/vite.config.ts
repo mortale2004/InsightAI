@@ -11,6 +11,7 @@ export default defineConfig(({ mode }) => {
   return {
     define: {
       "import.meta.env.VITE_APP_API_URL": JSON.stringify(rootEnv.VITE_APP_API_URL),
+      "process.env.NODE_ENV": JSON.stringify(rootEnv.VITE_APP_NODE_ENV),
     },
     plugins: [tailwindcss()],
 

@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:widget": "tsc -b && vite build --mode=widget",
     "lint": "pnpm lint:biome && pnpm lint:tsc",
     "lint:biome": "pnpm /^lint:biome:.+/",
     "lint:biome:lint": "biome lint .",
