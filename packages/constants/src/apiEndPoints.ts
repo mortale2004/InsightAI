@@ -27,4 +27,5 @@ export const adminApiEndPoints: RoutesType = {
 
 export const pluginApiEndPoints: RoutesType = {
   execute: "/execute",
+  userChat: "/user-chats",
 };

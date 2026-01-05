@@ -133,7 +133,7 @@ namespace Backend.Services
         public async Task<string> GetSummaryOfPromptResponse(string Prompt, string ResponseText)
         {
             List<ChatMessage> messages = new List<ChatMessage>();
-            messages.Add(new SystemChatMessage("You summarize assistant responses in 1–2 sentences, preserving key facts."));
+            messages.Add(new SystemChatMessage("You summarize assistant responses in 1 to 2 sentences, preserving key facts."));
             messages.Add(new UserChatMessage($"Prompt:{Prompt}"));
             messages.Add(new UserChatMessage($"ResponseText:{ResponseText}"));
             return await _openAI.ExecutePromptAsync(messages);

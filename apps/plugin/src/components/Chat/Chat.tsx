@@ -1,5 +1,6 @@
 import { apiHooks } from "@/hooks/apiHooks";
 import { appPromptAtom } from "@/store/app";
+import { API_URL } from "@repo/hooks";
 import { useAtom } from "jotai";
 import { useEffect, useRef, useState } from "react";
 import { Conversation } from "./components/conversasion";
@@ -11,50 +12,97 @@ const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([
     { role: "assistant" as const, content: "Hello! How can I help you today?" },
   ]);
-  
+
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [appPrompt, setAppPrompt] = useAtom(appPromptAtom);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const [input, setInput] = useState("");
-  
-  // const [isLoading, setIsLoading] = useState(false);
-  const sendMessageApi = apiHooks?.execute?.useCreate({});
-  const isLoading = sendMessageApi?.status === "pending";
 
-   const sendMessage = () => {
-    if (!input.trim()) return;
-    setMessages((prev) => [...prev, { role: "user", content: input }]);
-    // setIsLoading(true);
-//     setTimeout(()=>{
-//       setMessages((prev)=>([
-//         ...prev,
-//         {
-//           role:"assistant",
-// content: responses[Math.floor(Math.random() * responses.length)]
-//         }
-//       ]))
-//       setIsLoading(false);
-//     }, 1000)
-    sendMessageApi.mutateAsync(
-      {
-        ...appPrompt,
-        prompt: input,
+  // const [isLoading, setIsLoading] = useState(false);
+  const userChat = apiHooks?.userChat?.useCreate({});
+  const [isStreamingStarted, setIsStreamingStarted] = useState(false);
+  const isLoading = userChat?.status === "pending" || isStreamingStarted;
+
+  const executePromptStreaming = async (prompt: string, userChatId:number) => {
+    const response = await fetch(`${API_URL}/execute`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-      {
-        onSuccess: (response: any) => {
-          if (!appPrompt?.userChatId){
-            setAppPrompt(appPrompt ? {
-              ...appPrompt,
-              userChatId: response?.userChatId,
-            } : undefined)
-          }
-          setMessages((prev) => [...prev, { role: "assistant", content: response?.responseText }]);
-        },
-      }
-    );
-    setInput("");
+      body: JSON.stringify({ prompt, userChatId }),
+    });
+
+    if (!response.body) {
+      throw new Error("No response body");
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+
+    let accumulatedText = "";
+    const lastMessageIndex = messages.length;
+
+    while (true) {
+      const { value, done } = await reader.read();
+      setIsStreamingStarted(true);
+      if (done) {
+        setIsStreamingStarted(false);
+        break;
+      };
+
+      const chunk = decoder.decode(value, { stream: true });
+      accumulatedText += chunk;
+
+      // Update assistant message incrementally
+      setMessages((prev) => {
+        const newMessages = [...prev];
+
+        // If assistant message does NOT exist yet → create it
+        if (newMessages.length === lastMessageIndex) {
+          newMessages.push({
+            role: "assistant",
+            content: accumulatedText,
+          });
+        }
+        // If it already exists → update it
+        else {
+          newMessages[lastMessageIndex] = {
+            ...newMessages[lastMessageIndex],
+            content: accumulatedText,
+          };
+        }
+        return newMessages;
+      });
+    }
   };
 
+  const sendMessage = () => {
+    if (!input.trim()) return;
+    setMessages((prev) => [...prev, { role: "user", content: input }]);
+    if (appPrompt?.userChatId) {
+      executePromptStreaming(input, appPrompt?.userChatId)
+    } else {
+      userChat.mutateAsync(
+        {
+          ...appPrompt,
+        },
+        {
+          onSuccess: (response: any) => {
+            setAppPrompt(
+              appPrompt
+                ? {
+                    ...appPrompt,
+                    userChatId: response?.userChatId,
+                  }
+                : undefined
+            );
+            executePromptStreaming(input, response?.userChatId)
+          },
+        }
+      );
+    }
+    setInput("");
+  };
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -67,7 +115,6 @@ const Chat = () => {
       inputRef.current.style.height = `${inputRef.current.scrollHeight}px`;
     }
   }, [input]);
-
 
   return (
     <Conversation className="h-screen bg-background text-foreground">
@@ -85,11 +132,10 @@ const Chat = () => {
 };
 export default Chat;
 
-
 // const responses = [
 //   `# ChatGPT-Style Assistant Response (Markdown)
 
-// This is an example of a **large AI response** rendered using Markdown.  
+// This is an example of a **large AI response** rendered using Markdown.
 // It is designed to test **full-width layout**, spacing, and readability.
 
 // ---
@@ -105,7 +151,7 @@ export default Chat;
 
 // Confining them inside chat bubbles reduces readability.
 
-// > **Design principle:**  
+// > **Design principle:**
 // > If the message explains or teaches, let it breathe.
 
 // ---
@@ -167,7 +213,7 @@ export default Chat;
 // - Messages often contain **code, lists, and explanations**
 // - Constraining width harms readability
 
-// > **Key idea:**  
+// > **Key idea:**
 // > The assistant is not chatting — it is *answering*.
 
 // ---

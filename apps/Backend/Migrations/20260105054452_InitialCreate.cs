@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class TablesAndSeedData : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -92,6 +92,20 @@ namespace Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserChatContexts",
+                columns: table => new
+                {
+                    UserChatContextId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserChatId = table.Column<int>(type: "int", nullable: false),
+                    UserChatContextData = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserChatContexts", x => x.UserChatContextId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserChats",
                 columns: table => new
                 {
@@ -102,7 +116,6 @@ namespace Backend.Migrations
                     ApplicationId = table.Column<int>(type: "int", nullable: false),
                     RegionId = table.Column<int>(type: "int", nullable: false),
                     FileTypeId = table.Column<int>(type: "int", nullable: false),
-                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AddedOn = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -118,6 +131,7 @@ namespace Backend.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Prompt = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ResponseText = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SummaryText = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserChatId = table.Column<int>(type: "int", nullable: false),
                     AddedOn = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -175,7 +189,7 @@ namespace Backend.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "UserId", "Email", "FirstName", "LastName", "MiddleName", "PasswordHash", "RegionId" },
-                values: new object[] { 1, "admin@insightai.com", "Admin", "User", null, "$2a$11$v4UocLFEfnMHv7g3PJj9/O4IgfzcSM.UHuR5AmoC7mo8xltgTS1AW", 1 });
+                values: new object[] { 1, "admin@insightai.com", "Admin", "User", null, "$2a$11$1tiXVYO7SONyOE2/l9lfEuXG/e2Um.is4IMlHxdVPj4sPUqOb/aXy", 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserApplicationMapping_UserId_ApplicationId",
@@ -201,6 +215,9 @@ namespace Backend.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserApplicationMapping");
+
+            migrationBuilder.DropTable(
+                name: "UserChatContexts");
 
             migrationBuilder.DropTable(
                 name: "UserChats");

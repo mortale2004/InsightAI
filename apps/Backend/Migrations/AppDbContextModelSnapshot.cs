@@ -221,7 +221,7 @@ namespace Backend.Migrations
                             Email = "admin@insightai.com",
                             FirstName = "Admin",
                             LastName = "User",
-                            PasswordHash = "$2a$11$v4UocLFEfnMHv7g3PJj9/O4IgfzcSM.UHuR5AmoC7mo8xltgTS1AW",
+                            PasswordHash = "$2a$11$1tiXVYO7SONyOE2/l9lfEuXG/e2Um.is4IMlHxdVPj4sPUqOb/aXy",
                             RegionId = 1
                         });
                 });
@@ -265,10 +265,6 @@ namespace Backend.Migrations
                     b.Property<int>("ApplicationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("FileTypeId")
                         .HasColumnType("int");
 
@@ -287,6 +283,26 @@ namespace Backend.Migrations
                     b.ToTable("UserChats");
                 });
 
+            modelBuilder.Entity("Backend.Models.UserChatContext", b =>
+                {
+                    b.Property<int>("UserChatContextId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserChatContextId"));
+
+                    b.Property<string>("UserChatContextData")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserChatId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserChatContextId");
+
+                    b.ToTable("UserChatContexts");
+                });
+
             modelBuilder.Entity("Backend.Models.UserPrompt", b =>
                 {
                     b.Property<int>("UserPromptId")
@@ -303,6 +319,10 @@ namespace Backend.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ResponseText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SummaryText")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

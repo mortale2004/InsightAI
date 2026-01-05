@@ -1,7 +1,7 @@
-import React, { RefObject, useState } from "react";
-import { PromptInput } from "./prompt-input";
 import { Button } from "@repo/ui/components/button";
 import { SendHorizontal } from "lucide-react";
+import React, { RefObject } from "react";
+import { PromptInput } from "./prompt-input";
 const Input: React.FC<{
   inputRef: RefObject<HTMLTextAreaElement | null>;
   sendMessage: () => void;

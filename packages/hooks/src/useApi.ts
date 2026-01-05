@@ -9,7 +9,7 @@ import {
 import axios from "axios";
 import { routeMethod, routeMethodsArray, RoutesType, routeMethods } from "@repo/constants";
 
-const API_URL = // @ts-ignore
+export const API_URL = // @ts-ignore
   import.meta.env.VITE_APP_API_URL;
 
 // Create an Axios instance
